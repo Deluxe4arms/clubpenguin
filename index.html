@@ -1,140 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Penguin Jump Game</title>
+    <title>Penguin Cart Surfer Clone</title>
     <style>
         body {
-            background-color: #222;
-            color: white;
-            text-align: center;
             margin: 0;
-            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background: #000;
         }
         canvas {
             display: block;
             margin: auto;
-            background-color: #333;
-            border: 2px solid white;
+            background-color: #87CEEB; /* fallback if background image fails */
         }
     </style>
 </head>
 <body>
-    <h1>Penguin Jump</h1>
-    <p>Press UP or SPACE to jump, R to restart</p>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
+        // Load background image
+        const bgImg = new Image();
+        bgImg.src = "background.png"; // Make sure background.png is in the same folder
+
+        // Load penguin image
         const penguinImg = new Image();
         penguinImg.src = "penguin.png"; // Make sure penguin.png is in the same folder
 
-        const gravity = 0.6;
-        const jumpForce = -12;
-        let keys = {};
-        let score = 0;
-        let gameOver = false;
+        // Player position
+        let penguinX = 400;
+        let penguinY = 300;
+        const penguinSpeed = 5;
 
-        const penguin = {
-            x: 50,
-            y: 300,
-            width: 50,
-            height: 50,
-            ySpeed: 0,
-            onGround: true
-        };
+        // Track keys
+        const keys = {};
 
-        const obstacles = [];
-
-        function spawnObstacle() {
-            const height = Math.random() * 40 + 20;
-            obstacles.push({
-                x: canvas.width,
-                y: 350 - height,
-                width: 30,
-                height,
-                color: "red"
-            });
-        }
-
-        function resetGame() {
-            obstacles.length = 0;
-            score = 0;
-            gameOver = false;
-            penguin.y = 300;
-            penguin.ySpeed = 0;
-            penguin.onGround = true;
-        }
+        document.addEventListener("keydown", (e) => keys[e.key] = true);
+        document.addEventListener("keyup", (e) => keys[e.key] = false);
 
         function update() {
-            if (gameOver) return;
-
-            score++;
-            penguin.ySpeed += gravity;
-            penguin.y += penguin.ySpeed;
-
-            if (penguin.y >= 300) {
-                penguin.y = 300;
-                penguin.ySpeed = 0;
-                penguin.onGround = true;
-            } else {
-                penguin.onGround = false;
-            }
-
-            if (keys["ArrowUp"] || keys[" "]) {
-                if (penguin.onGround) {
-                    penguin.ySpeed = jumpForce;
-                }
-            }
-
-            for (let obs of obstacles) {
-                obs.x -= 5;
-
-                if (
-                    penguin.x < obs.x + obs.width &&
-                    penguin.x + penguin.width > obs.x &&
-                    penguin.y < obs.y + obs.height &&
-                    penguin.y + penguin.height > obs.y
-                ) {
-                    gameOver = true;
-                }
-            }
-
-            while (obstacles.length && obstacles[0].x < -obstacles[0].width) {
-                obstacles.shift();
-            }
-
-            if (Math.random() < 0.02) {
-                spawnObstacle();
-            }
+            if (keys["ArrowUp"]) penguinY -= penguinSpeed;
+            if (keys["ArrowDown"]) penguinY += penguinSpeed;
+            if (keys["ArrowLeft"]) penguinX -= penguinSpeed;
+            if (keys["ArrowRight"]) penguinX += penguinSpeed;
         }
 
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw background
+            ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
 
-            if (penguinImg.complete && penguinImg.naturalWidth > 0) {
-                ctx.drawImage(penguinImg, penguin.x, penguin.y, penguin.width, penguin.height);
-            } else {
-                ctx.fillStyle = "blue";
-                ctx.fillRect(penguin.x, penguin.y, penguin.width, penguin.height);
-            }
-
-            for (let obs of obstacles) {
-                ctx.fillStyle = obs.color;
-                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-            }
-
-            ctx.fillStyle = "white";
-            ctx.font = "20px Arial";
-            ctx.fillText(`Score: ${score}`, 10, 30);
-
-            if (gameOver) {
-                ctx.fillStyle = "white";
-                ctx.font = "40px Arial";
-                ctx.fillText("Game Over! Press R to Restart", 150, 200);
-            }
+            // Draw penguin
+            ctx.drawImage(penguinImg, penguinX, penguinY, 80, 80);
         }
 
         function gameLoop() {
@@ -143,20 +62,17 @@
             requestAnimationFrame(gameLoop);
         }
 
-        window.addEventListener("keydown", (e) => {
-            keys[e.key] = true;
-            if (e.key.toLowerCase() === "r" && gameOver) {
-                resetGame();
+        // Ensure BOTH images are loaded before starting
+        let loadedImages = 0;
+        function checkStart() {
+            loadedImages++;
+            if (loadedImages === 2) {
+                gameLoop();
             }
-        });
+        }
 
-        window.addEventListener("keyup", (e) => {
-            keys[e.key] = false;
-        });
-
-        penguinImg.onload = function() {
-            gameLoop();
-        };
+        bgImg.onload = checkStart;
+        penguinImg.onload = checkStart;
     </script>
 </body>
 </html>
