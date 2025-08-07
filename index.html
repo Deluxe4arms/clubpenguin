@@ -1,125 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Cart Surfer Style Game</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #000;
+<meta charset="UTF-8">
+<title>Cart Surfer</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: black;
     }
     canvas {
-      display: block;
-      margin: auto;
-      background-color: #87CEEB;
+        display: block;
+        background: url("cart_surfer_background.png") no-repeat center center;
+        background-size: cover; /* Stretches to fill */
+        width: 100vw;
+        height: 100vh;
     }
-  </style>
+</style>
 </head>
 <body>
-
-<canvas id="gameCanvas" width="800" height="400"></canvas>
+<canvas id="gameCanvas"></canvas>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-// Game variables
-let penguinX = 100;
-let penguinY = 300;
-let penguinWidth = 50;
-let penguinHeight = 50;
-let velocityY = 0;
-let gravity = 0.6;
-let jumpStrength = -10;
-let isJumping = false;
-let obstacles = [];
-let frameCount = 0;
-let score = 0;
-
-// Images
-const penguinImg = new Image();
-penguinImg.src = "penguin.png"; // make sure penguin.png is in same folder
-
-const bgImg = new Image();
-bgImg.src = "background.png"; // make sure background.png is in same folder
-
-// Wait until both images load before starting
-let imagesLoaded = 0;
-function checkStart() {
-  imagesLoaded++;
-  if (imagesLoaded === 2) {
-    requestAnimationFrame(gameLoop);
-  }
-}
-penguinImg.onload = checkStart;
-bgImg.onload = checkStart;
-
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && !isJumping) {
-    velocityY = jumpStrength;
-    isJumping = true;
-  }
-});
-
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-
-function update() {
-  penguinY += velocityY;
-  velocityY += gravity;
-
-  if (penguinY >= 300) {
-    penguinY = 300;
-    isJumping = false;
-  }
-
-  frameCount++;
-  if (frameCount % 90 === 0) {
-    obstacles.push({
-      x: canvas.width,
-      y: 320,
-      width: 40,
-      height: 40
-    });
-  }
-
-  for (let i = obstacles.length - 1; i >= 0; i--) {
-    obstacles[i].x -= 5;
-    if (obstacles[i].x + obstacles[i].width < 0) {
-      obstacles.splice(i, 1);
-      score++;
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
 
-    if (
-      penguinX < obstacles[i].x + obstacles[i].width &&
-      penguinX + penguinWidth > obstacles[i].x &&
-      penguinY < obstacles[i].y + obstacles[i].height &&
-      penguinY + penguinHeight > obstacles[i].y
-    ) {
-      alert("Game Over! Your score: " + score);
-      document.location.reload();
-    }
-  }
-}
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
-function draw() {
-  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-  ctx.drawImage(penguinImg, penguinX, penguinY, penguinWidth, penguinHeight);
-
-  ctx.fillStyle = "brown";
-  obstacles.forEach(ob => {
-    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
-  });
-
-  ctx.fillStyle = "white";
-  ctx.font = "20px Arial";
-  ctx.fillText("Score: " + score, 10, 30);
-}
+    // Test draw
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("Cart Surfer Loaded!", 50, 50);
 </script>
-
 </body>
 </html>
