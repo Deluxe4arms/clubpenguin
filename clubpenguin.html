@@ -1,531 +1,501 @@
-Skip to content
-Chat history
-
-You said:
-generate a clubpenguin style mini game like  cart surfer 
-ChatGPT said:
-Here’s a full concept for a Club Penguin-style mini-game inspired by Cart Surfer, designed to be simple, replayable, and easily extendable in game engines like Unity, Godot, or even HTML5/JavaScript.
-
-🎮 Game Title: Mine Rush!
-🧩 Concept:
-You play as a penguin mining deep underground, riding a cart through twisty tunnels. Just like Cart Surfer, the goal is to survive as long as possible, perform tricks, and rack up points—before you crash.
-
-🕹️ Gameplay Overview:
-Endless runner format (or loop-based levels)
-
-Player rides on a cart that goes forward automatically
-
-Use tricks and dodges to earn points
-
-Speed gradually increases over time
-
-🎯 Controls:
-Arrow Keys or WASD:
-
-Left/Right: Lean left or right to turn corners
-
-Down: Slide or duck
-
-Up: Jump
-
-Spacebar: Perform tricks mid-air or while grinding
-
-🧱 Obstacles & Elements:
-Sharp turns (Left/Right)
-
-Fallen logs / low beams (Duck)
-
-Broken tracks / pits (Jump)
-
-Rails (Grind for bonus points)
-
-Mine Explosives (avoid or detonate for effects)
-
-💥 Tricks System:
-Trigger tricks while in air or grinding for bonus points:
-
-Flip (Jump + Spacebar)
-
-Spin (Hold Left/Right + Spacebar mid-air)
-
-Grind Jump (Jump off rail at perfect timing)
-
-Tricks have a cooldown. Overusing the same trick yields fewer points over time (like Cart Surfer).
-
-🪙 Scoring System:
-Action	Points
-Basic Trick	+100
-Combo Trick	+300
-Perfect Turn	+50
-Grind (per second)	+20
-Survive 1 second	+10
-Score multiplier increases the longer you survive without crashing.
-
-❌ Game Over Conditions:
-Crashing into an obstacle
-
-Failing to turn on time
-
-Falling into a pit
-
-Running into an explosive
-
-🎨 Art Style:
-2D sprites or simple 3D (like Club Penguin)
-
-Cartoonish mine aesthetic: rocks, rails, lamps, crystals
-
-Chibi penguin characters (customizable skins possible)
-
-🔊 Sound:
-Looping minecart sound
-
-Trick sound effects
-
-Cheerful background music
-
-Crash SFX with penguin sound ("Wahhh!")
-
-🛠️ Optional Features:
-Character Customization
-
-Power-ups (Shield, Magnet for coins, Slow-Mo)
-
-Daily High Score Leaderboard
-
-Unlockable carts/tricks
-
-✅ Ideal Engines to Build It:
-Unity 2D: Best for sprite-based endless runners
-
-Godot: Lightweight and great for 2D/3D
-
-HTML5 + JavaScript (Canvas): Great for browser-based clones
-
-🔧 Want a Starter Template?
-I can give you code to get started in:
-
-Unity (C#)
-
-Godot (GDScript)
-
-HTML5 (JavaScript)
-
-Let me know what platform you want to build it on, and I’ll generate a working starter project!
-
-You said:
-whats a great coding language for this
-ChatGPT said:
-For a Club Penguin-style mini-game like Cart Surfer, here are the best coding languages and engines, based on your goals:
-
-🏆 Best Overall Choice:
-🎮 Unity (C#)
-Language: C#
-
-Why it's great:
-
-Excellent 2D and 3D support
-
-Tons of tutorials and assets available
-
-Good physics, animation, and UI support
-
-Export to PC, Web, Android, iOS, and more
-
-Drawback: Requires more setup; heavier engine
-
-✅ Best if you're making a polished, multi-platform game
-
-🧠 Easiest for Beginners:
-🧱 Godot (GDScript or C#)
-Language: GDScript (similar to Python), or C# (optional)
-
-Why it's great:
-
-Lightweight, fast
-
-Easier to learn than Unity
-
-Built-in editor, less setup
-
-Drawback: Slightly smaller community than Unity
-
-✅ Best if you're new and want a fast learning curve
-
-🌐 Best for Browser Game:
-💻 HTML5 + JavaScript
-Language: JavaScript (or TypeScript)
-
-Why it's great:
-
-No installation needed — runs in any browser
-
-Easy to share with friends
-
-Simple game libraries like:
-
-Phaser.js
-
-Pixi.js
-
-Drawback: Less suited for complex physics or 3D
-
-✅ Best if you want an easy-to-share web game
-
-🕹 Summary Table:
-Goal	Language + Engine	Difficulty	Pros
-Polished 2D/3D Game	C# + Unity	Medium	Pro-grade, cross-platform
-Easy to Learn & Use	GDScript + Godot	Easy	Lightweight, simple
-Browser-Based Simplicity	JavaScript + Phaser.js	Easy-Med	Instant web play
-Max Performance	C++ + Unreal	Hard	Overkill for this project
-👍 Recommendation for You:
-Since you’re into projects like Ren’Py games and want something Club Penguin-like, I recommend:
-
-🔹 Unity (C#) – if you want a full game with tricks, physics, and mobile/web potential
-🔹 Godot (GDScript) – if you want quick development and ease of use
-🔹 Phaser.js (JavaScript) – if you want to make a web game quickly
-
-Would you like me to generate a starter project in one of these right now? Let me know which engine you choose!
-
-You said:
-generatate it with html5 and Javascript
-ChatGPT said:
-Here's a working HTML5 + JavaScript version of a simple Mine Rush-style cart mini-game. You can open this in any browser or edit it with tools like VS Code or CodePen.
-
-🟦 Use:
-
-↑ or Spacebar to jump
-
-R to restart after crashing
-
-Let me know if you want:
-
-SFX or music
-
-Tricks system like Cart Surfer
-
-Coins / power-ups
-
-Mobile controls
-
-Ready to expand it when you are!
-
-You said:
-does it come with the characters
-ChatGPT said:
-Right now, the code I gave you does not include character sprites — it uses a simple colored rectangle (cyan box) to represent the penguin character. That keeps the prototype simple, but you can easily add a sprite (image) instead.
-
-🧊 To Add a Penguin Character Sprite:
-You’ll need:
-
-A .png image of your character (transparent background is best)
-
-Code to load and draw that image
-
-✅ Step-by-Step Instructions:
-1. Place the image (e.g., penguin.png) in the same folder as your HTML file.
-2. Modify the JavaScript like this:
-Replace the draw() function block with:
-
-const penguinImg = new Image();
-penguinImg.src = "penguin.png"; // Replace with your sprite name
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw player
-  ctx.drawImage(penguinImg, penguin.x, penguin.y, penguin.width, penguin.height);
-
-  // Draw obstacles
-  for (let obs of obstacles) {
-    ctx.fillStyle = obs.color;
-    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-  }
-
-  // Score
-  ctx.fillStyle = "white";
-  ctx.font = "20px Arial";
-  ctx.fillText(`Score: ${score}`, 10, 30);
-
-  // Game over
-  if (gameOver) {
-    ctx.fillStyle = "white";
-    ctx.font = "40px Arial";
-    ctx.fillText("Game Over! Press R to Restart", 150, 200);
-  }
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Dimension by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Header -->
+			<header id="header">
+				<div class="logo">
+					<span class="icon fa-gem"></span>
+				</div>
+				<div class="content">
+					<div class="inner">
+						<h1>Dimension</h1>
+						<p>A fully responsive site template designed by <a href="https://html5up.net">HTML5 UP</a> and released<br />
+						for free under the <a href="https://html5up.net/license">Creative Commons</a> license.</p>
+					</div>
+				</div>
+				<nav>
+					<ul>
+						<li><a href="#intro">Intro</a></li>
+						<li><a href="#work">Work</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+						<!--<li><a href="#elements">Elements</a></li>-->
+					</ul>
+				</nav>
+			</header>
+
+			<!-- Main -->
+			<div id="main">
+
+				<!-- Intro -->
+				<article id="intro">
+					<h2 class="major">Intro</h2>
+					<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
+					<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+				</article>
+
+				<!-- Work -->
+				<article id="work">
+					<h2 class="major">Work</h2>
+					<span class="image main"><img src="images/pic02.jpg" alt="" /></span>
+					<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
+					<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
+				</article>
+
+				<!-- About -->
+				<article id="about">
+					<h2 class="major">About</h2>
+					<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
+					<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+				</article>
+
+				<!-- Contact -->
+				<article id="contact">
+					<h2 class="major">Contact</h2>
+					<form method="post" action="#">
+						<div class="fields">
+							<div class="field half">
+								<label for="name">Name</label>
+								<input type="text" name="name" id="name" />
+							</div>
+							<div class="field half">
+								<label for="email">Email</label>
+								<input type="text" name="email" id="email" />
+							</div>
+							<div class="field">
+								<label for="message">Message</label>
+								<textarea name="message" id="message" rows="4"></textarea>
+							</div>
+						</div>
+						<ul class="actions">
+							<li><input type="submit" value="Send Message" class="primary" /></li>
+							<li><input type="reset" value="Reset" /></li>
+						</ul>
+					</form>
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+					</ul>
+				</article>
+
+				<!-- Elements -->
+				<article id="elements">
+					<h2 class="major">Elements</h2>
+
+					<section>
+						<h3 class="major">Text</h3>
+						<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
+						This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
+						This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
+						<hr />
+						<h2>Heading Level 2</h2>
+						<h3>Heading Level 3</h3>
+						<h4>Heading Level 4</h4>
+						<h5>Heading Level 5</h5>
+						<h6>Heading Level 6</h6>
+						<hr />
+						<h4>Blockquote</h4>
+						<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
+						<h4>Preformatted</h4>
+						<pre><code>i = 0;
+
+while (!deck.isInOrder()) {
+    print 'Iteration ' + i;
+    deck.shuffle();
+    i++;
 }
-🖼️ Want Me to Generate a Penguin Sprite?
-I can generate a cute Club Penguin-style penguin sprite for you. Want:
 
-A classic black penguin?
-
-A custom color or outfit?
-
-Standing, jumping, or riding pose?
-
-Let me know and I’ll make it!
-
-You said:
-merge it with the html
-ChatGPT said:
-✅ The character sprite support is now fully merged into your HTML game code. Just make sure you place a penguin.png image in the same folder as the .html file.
-
-Would you like me to generate a matching penguin sprite image for this game?
-
-You said:
-is there a free website I could use
-ChatGPT said:
-Yes — here are some free websites where you can find or create a penguin character sprite for your game:
-
-🖼️ 1. OpenGameArt.org
-🔗 https://opengameart.org
-
-Search: penguin sprite, platformer character
-
-Free and open license assets
-
-Download as PNGs and drop into your project
-
-🎨 2. Kenney.nl
-🔗 https://kenney.nl/assets
-
-Kenney’s assets are high quality and CC0 (public domain)
-
-Try "Animal Pack" or "Platformer Pack"
-
-✏️ 3. PiskelApp (Create Your Own)
-🔗 https://www.piskelapp.com
-
-Free online pixel art tool
-
-You can draw and export your own penguin sprite
-
-Supports transparency and animation frames
-
-🐧 Want me to generate a sprite for you?
-I can also create a simple Club Penguin-style penguin sprite (static or animated) and send you a PNG. Want me to do that?
-
-If yes, let me know:
-
-What color penguin?
-
-Sitting or riding pose?
-
-Holding anything (lantern, cart handle, etc)?
-
-You said:
-no for html websites
-ChatGPT said:
-Ah! If you're asking where to host or run your HTML5 game online, here are the best free websites where you can upload and run this exact HTML + JS game (like your Mine Rush Game):
-
-🌐 Best Free HTML Hosting Sites:
-1. itch.io
-Made for games 🕹️
-
-Just zip your HTML game files (.html, .js, .png, etc.)
-
-Supports HTML5 games out of the box
-
-Create a devlog, collect feedback, even monetize if you want
-
-Example: Club Penguin-style mini-game
-
-2. Netlify
-Drag-and-drop your entire folder (HTML, assets, images)
-
-Auto-deploys your site instantly
-
-No coding knowledge required
-
-Great if you want a free custom URL like mine-rush.netlify.app
-
-3. GitHub Pages
-Free hosting via GitHub repos
-
-More setup but powerful, and great for portfolios
-
-Just upload your files and use the gh-pages branch
-
-4. CodePen
-Live-edit HTML, CSS, and JavaScript
-
-Good for testing and sharing small games
-
-Not ideal for games with many external files (like images)
-
-5. Glitch
-Instant deploy of web apps
-
-Great for multiplayer or server-connected games
-
-Edit right in the browser
-
-🧠 Recommended for You:
-If you're working with penguin.png and simple files:
-
-✅ Use itch.io or Netlify — fast and game-friendly.
-
-If you want help packaging your files into a zip for Itch or uploading to Netlify/GitHub, I can walk you through it or generate a starter folder. Just say the word!
-
-ChatGPT said:
-
-Answer in chat instead
-I fixed the error by ensuring the game loop only starts after the penguin image has fully loaded. This prevents the drawImage call from running on a broken or unloaded image.
-
-Here’s the updated complete HTML with the fix applied:
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mine Rush - Cart Game</title>
-  <style>
-    canvas {
-      background: #333;
-      display: block;
-      margin: 0 auto;
-    }
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="gameCanvas" width="800" height="400"></canvas>
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    const penguinImg = new Image();
-    penguinImg.src = "penguin.png"; // Ensure this file is in the same directory
-
-    const penguin = {
-      x: 100,
-      y: 300,
-      width: 50,
-      height: 50,
-      ySpeed: 0,
-      onGround: true,
-    };
-
-    const gravity = 0.8;
-    const jumpForce = -12;
-    let keys = {};
-    let score = 0;
-    let gameOver = false;
-
-    const obstacles = [];
-
-    function spawnObstacle() {
-      const height = Math.random() * 40 + 20;
-      obstacles.push({
-        x: canvas.width,
-        y: 350 - height,
-        width: 30,
-        height,
-        color: "red",
-      });
-    }
-
-    function resetGame() {
-      obstacles.length = 0;
-      score = 0;
-      gameOver = false;
-      penguin.y = 300;
-      penguin.ySpeed = 0;
-      penguin.onGround = true;
-    }
-
-    function update() {
-      if (gameOver) return;
-
-      score++;
-      penguin.ySpeed += gravity;
-      penguin.y += penguin.ySpeed;
-
-      if (penguin.y >= 300) {
-        penguin.y = 300;
-        penguin.ySpeed = 0;
-        penguin.onGround = true;
-      } else {
-        penguin.onGround = false;
-      }
-
-      if (keys["ArrowUp"] || keys[" "]) {
-        if (penguin.onGround) {
-          penguin.ySpeed = jumpForce;
-        }
-      }
-
-      for (let obs of obstacles) {
-        obs.x -= 5;
-
-        if (
-          penguin.x < obs.x + obs.width &&
-          penguin.x + penguin.width > obs.x &&
-          penguin.y < obs.y + obs.height &&
-          penguin.y + penguin.height > obs.y
-        ) {
-          gameOver = true;
-        }
-      }
-
-      while (obstacles.length && obstacles[0].x < -obstacles[0].width) {
-        obstacles.shift();
-      }
-
-      if (Math.random() < 0.02) {
-        spawnObstacle();
-      }
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw player
-      ctx.drawImage(penguinImg, penguin.x, penguin.y, penguin.width, penguin.height);
-
-      // Draw obstacles
-      for (let obs of obstacles) {
-        ctx.fillStyle = obs.color;
-        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-      }
-
-      // Score
-      ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.fillText(`Score: ${score}`, 10, 30);
-
-      if (gameOver) {
-        ctx.fillStyle = "white";
-        ctx.font = "40px Arial";
-        ctx.fillText("Game Over! Press R to Restart", 150, 200);
-      }
-    }
-
-    function gameLoop() {
-      update();
-      draw();
-      requestAnimationFrame(gameLoop);
-    }
-
-    window.addEventListener("keydown", (e) => {
-      keys[e.key] = true;
-      if (e.key.toLowerCase() === "r" && gameOver) {
-        resetGame();
-      }
-    });
-
-    window.addEventListener("keyup", (e) => {
-      keys[e.key] = false;
-    });
-
-    // Start game loop only after image loads
-    penguinImg.onload = function() {
-      gameLoop();
-    };
-  </script>
-</body>
+print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
+					</section>
+
+					<section>
+						<h3 class="major">Lists</h3>
+
+						<h4>Unordered</h4>
+						<ul>
+							<li>Dolor pulvinar etiam.</li>
+							<li>Sagittis adipiscing.</li>
+							<li>Felis enim feugiat.</li>
+						</ul>
+
+						<h4>Alternate</h4>
+						<ul class="alt">
+							<li>Dolor pulvinar etiam.</li>
+							<li>Sagittis adipiscing.</li>
+							<li>Felis enim feugiat.</li>
+						</ul>
+
+						<h4>Ordered</h4>
+						<ol>
+							<li>Dolor pulvinar etiam.</li>
+							<li>Etiam vel felis viverra.</li>
+							<li>Felis enim feugiat.</li>
+							<li>Dolor pulvinar etiam.</li>
+							<li>Etiam vel felis lorem.</li>
+							<li>Felis enim et feugiat.</li>
+						</ol>
+						<h4>Icons</h4>
+						<ul class="icons">
+							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+							<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						</ul>
+
+						<h4>Actions</h4>
+						<ul class="actions">
+							<li><a href="#" class="button primary">Default</a></li>
+							<li><a href="#" class="button">Default</a></li>
+						</ul>
+						<ul class="actions stacked">
+							<li><a href="#" class="button primary">Default</a></li>
+							<li><a href="#" class="button">Default</a></li>
+						</ul>
+					</section>
+
+					<section>
+						<h3 class="major">Table</h3>
+						<h4>Default</h4>
+						<div class="table-wrapper">
+							<table>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Description</th>
+										<th>Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Item One</td>
+										<td>Ante turpis integer aliquet porttitor.</td>
+										<td>29.99</td>
+									</tr>
+									<tr>
+										<td>Item Two</td>
+										<td>Vis ac commodo adipiscing arcu aliquet.</td>
+										<td>19.99</td>
+									</tr>
+									<tr>
+										<td>Item Three</td>
+										<td> Morbi faucibus arcu accumsan lorem.</td>
+										<td>29.99</td>
+									</tr>
+									<tr>
+										<td>Item Four</td>
+										<td>Vitae integer tempus condimentum.</td>
+										<td>19.99</td>
+									</tr>
+									<tr>
+										<td>Item Five</td>
+										<td>Ante turpis integer aliquet porttitor.</td>
+										<td>29.99</td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="2"></td>
+										<td>100.00</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+
+						<h4>Alternate</h4>
+						<div class="table-wrapper">
+							<table class="alt">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Description</th>
+										<th>Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Item One</td>
+										<td>Ante turpis integer aliquet porttitor.</td>
+										<td>29.99</td>
+									</tr>
+									<tr>
+										<td>Item Two</td>
+										<td>Vis ac commodo adipiscing arcu aliquet.</td>
+										<td>19.99</td>
+									</tr>
+									<tr>
+										<td>Item Three</td>
+										<td> Morbi faucibus arcu accumsan lorem.</td>
+										<td>29.99</td>
+									</tr>
+									<tr>
+										<td>Item Four</td>
+										<td>Vitae integer tempus condimentum.</td>
+										<td>19.99</td>
+									</tr>
+									<tr>
+										<td>Item Five</td>
+										<td>Ante turpis integer aliquet porttitor.</td>
+										<td>29.99</td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="2"></td>
+										<td>100.00</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</section>
+
+					<section>
+						<h3 class="major">Buttons</h3>
+						<ul class="actions">
+							<li><a href="#" class="button primary">Primary</a></li>
+							<li><a href="#" class="button">Default</a></li>
+						</ul>
+						<ul class="actions">
+							<li><a href="#" class="button">Default</a></li>
+							<li><a href="#" class="button small">Small</a></li>
+						</ul>
+						<ul class="actions">
+							<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
+							<li><a href="#" class="button icon solid fa-download">Icon</a></li>
+						</ul>
+						<ul class="actions">
+							<li><span class="button primary disabled">Disabled</span></li>
+							<li><span class="button disabled">Disabled</span></li>
+						</ul>
+					</section>
+
+					<section>
+						<h3 class="major">Form</h3>
+						<form method="post" action="#">
+							<div class="fields">
+								<div class="field half">
+									<label for="demo-name">Name</label>
+									<input type="text" name="demo-name" id="demo-name" value="" placeholder="Jane Doe" />
+								</div>
+								<div class="field half">
+									<label for="demo-email">Email</label>
+									<input type="email" name="demo-email" id="demo-email" value="" placeholder="jane@untitled.tld" />
+								</div>
+								<div class="field">
+									<label for="demo-category">Category</label>
+									<select name="demo-category" id="demo-category">
+										<option value="">-</option>
+										<option value="1">Manufacturing</option>
+										<option value="1">Shipping</option>
+										<option value="1">Administration</option>
+										<option value="1">Human Resources</option>
+									</select>
+								</div>
+								<div class="field half">
+									<input type="radio" id="demo-priority-low" name="demo-priority" checked>
+									<label for="demo-priority-low">Low</label>
+								</div>
+								<div class="field half">
+									<input type="radio" id="demo-priority-high" name="demo-priority">
+									<label for="demo-priority-high">High</label>
+								</div>
+								<div class="field half">
+									<input type="checkbox" id="demo-copy" name="demo-copy">
+									<label for="demo-copy">Email me a copy</label>
+								</div>
+								<div class="field half">
+									<input type="checkbox" id="demo-human" name="demo-human" checked>
+									<label for="demo-human">Not a robot</label>
+								</div>
+								<div class="field">
+									<label for="demo-message">Message</label>
+									<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+								</div>
+							</div>
+							<ul class="actions">
+								<li><input type="submit" value="Send Message" class="primary" /></li>
+								<li><input type="reset" value="Reset" /></li>
+							</ul>
+						</form>
+					</section>
+
+				</article>
+
+				<!-- Mine Rush Cart Game -->
+				<article id="game" style="text-align:center; padding: 2em;">
+					<h2 class="major">Mine Rush Cart Game</h2>
+					<canvas id="gameCanvas" width="800" height="400" style="background:#333; margin: auto; display: block;"></canvas>
+				</article>
+
+			</div>
+
+			<!-- Footer -->
+			<footer id="footer">
+				<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+			</footer>
+
+		</div>
+
+		<!-- BG -->
+		<div id="bg"></div>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+
+		<script>
+			const canvas = document.getElementById("gameCanvas");
+			const ctx = canvas.getContext("2d");
+
+			const penguinImg = new Image();
+			penguinImg.src = "penguin.png"; // Make sure penguin.png is in your root or update path
+
+			const penguin = {
+				x: 100,
+				y: 300,
+				width: 50,
+				height: 50,
+				ySpeed: 0,
+				onGround: true,
+			};
+
+			const gravity = 0.8;
+			const jumpForce = -12;
+			let keys = {};
+			let score = 0;
+			let gameOver = false;
+
+			const obstacles = [];
+
+			function spawnObstacle() {
+				const height = Math.random() * 40 + 20;
+				obstacles.push({
+					x: canvas.width,
+					y: 350 - height,
+					width: 30,
+					height,
+					color: "red",
+				});
+			}
+
+			function resetGame() {
+				obstacles.length = 0;
+				score = 0;
+				gameOver = false;
+				penguin.y = 300;
+				penguin.ySpeed = 0;
+				penguin.onGround = true;
+			}
+
+			function update() {
+				if (gameOver) return;
+
+				score++;
+				penguin.ySpeed += gravity;
+				penguin.y += penguin.ySpeed;
+
+				if (penguin.y >= 300) {
+					penguin.y = 300;
+					penguin.ySpeed = 0;
+					penguin.onGround = true;
+				} else {
+					penguin.onGround = false;
+				}
+
+				if (keys["ArrowUp"] || keys[" "]) {
+					if (penguin.onGround) {
+						penguin.ySpeed = jumpForce;
+					}
+				}
+
+				for (let obs of obstacles) {
+					obs.x -= 5;
+
+					if (
+						penguin.x < obs.x + obs.width &&
+						penguin.x + penguin.width > obs.x &&
+						penguin.y < obs.y + obs.height &&
+						penguin.y + penguin.height > obs.y
+					) {
+						gameOver = true;
+					}
+				}
+
+				while (obstacles.length && obstacles[0].x < -obstacles[0].width) {
+					obstacles.shift();
+				}
+
+				if (Math.random() < 0.02) {
+					spawnObstacle();
+				}
+			}
+
+			function draw() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				// Draw player
+				ctx.drawImage(penguinImg, penguin.x, penguin.y, penguin.width, penguin.height);
+
+				// Draw obstacles
+				for (let obs of obstacles) {
+					ctx.fillStyle = obs.color;
+					ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+				}
+
+				// Score
+				ctx.fillStyle = "white";
+				ctx.font = "20px Arial";
+				ctx.fillText(`Score: ${score}`, 10, 30);
+
+				if (gameOver) {
+					ctx.fillStyle = "white";
+					ctx.font = "40px Arial";
+					ctx.fillText("Game Over! Press R to Restart", 150, 200);
+				}
+			}
+
+			function gameLoop() {
+				update();
+				draw();
+				requestAnimationFrame(gameLoop);
+			}
+
+			window.addEventListener("keydown", (e) => {
+				keys[e.key] = true;
+				if (e.key.toLowerCase() === "r" && gameOver) {
+					resetGame();
+				}
+			});
+
+			window.addEventListener("keyup", (e) => {
+				keys[e.key] = false;
+			});
+
+			penguinImg.onload = function() {
+				gameLoop();
+			};
+		</script>
+
+	</body>
 </html>
