@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Club Penguin - Pointer Lock + Click to Move</title>
+<title>Club Penguin - Pointer Lock + Click to Move (Ground Only)</title>
 <style>
   body {
     margin: 0;
@@ -46,7 +46,9 @@
 <div id="instructions">
   Click to lock pointer and look around<br />
   Click anywhere (while pointer locked or unlocked) to move penguin<br />
-  Press ESC to unlock pointer
+  Press ESC to unlock pointer<br />
+  <br />
+  Penguin can only move on the ground (white ellipse area)
 </div>
 <div id="hud" style="display:none;">Position: (0,0), Angle: 0</div>
 <canvas id="game"></canvas>
@@ -63,7 +65,6 @@
   window.addEventListener('resize', resize);
   resize();
 
-  // Player state
   const penguin = {
     x: 0,
     y: 0,
@@ -72,21 +73,58 @@
     target: null
   };
 
-  // Convert screen coords to world coords relative to penguin center
   function screenToWorld(screenX, screenY) {
     const dx = screenX - canvas.width / 2;
     const dy = screenY - canvas.height / 2;
     return { x: penguin.x + dx, y: penguin.y + dy };
   }
 
-  // Pointer lock setup: click to lock pointer if not locked
+  // Clamp target point to inside the ground ellipse
+  function clampToGround(x, y) {
+    const radiusX = canvas.width;
+    const radiusY = canvas.height / 1.5;
+
+    const ellipseCenterX = penguin.x + canvas.width / 2;
+    const ellipseCenterY = penguin.y + canvas.height;
+
+    const normX = (x - ellipseCenterX) / radiusX;
+    const normY = (y - ellipseCenterY) / radiusY;
+
+    const distSquared = normX * normX + normY * normY;
+
+    if (distSquared <= 1) {
+      // Inside ellipse
+      return { x, y };
+    }
+
+    // Outside ellipse, clamp to edge
+    const scale = 1 / Math.sqrt(distSquared);
+    return {
+      x: ellipseCenterX + normX * scale * radiusX,
+      y: ellipseCenterY + normY * scale * radiusY
+    };
+  }
+
+  let lastMousePos = { x: canvas.width / 2, y: canvas.height / 2 };
+
+  document.addEventListener('mousemove', e => {
+    if (document.pointerLockElement === canvas) {
+      penguin.angle += e.movementX * 0.002;
+    } else {
+      lastMousePos.x = e.clientX;
+      lastMousePos.y = e.clientY;
+    }
+  });
+
   canvas.addEventListener('click', () => {
     if (document.pointerLockElement !== canvas) {
       canvas.requestPointerLock();
     }
+    let target = screenToWorld(lastMousePos.x, lastMousePos.y);
+    target = clampToGround(target.x, target.y);
+    penguin.target = target;
   });
 
-  // Show/hide instructions & hud on pointer lock changes
   document.addEventListener('pointerlockchange', () => {
     if (document.pointerLockElement === canvas) {
       instructions.style.display = 'none';
@@ -97,20 +135,6 @@
     }
   });
 
-  // Mouse movement rotates penguin angle when pointer locked
-  document.addEventListener('mousemove', e => {
-    if (document.pointerLockElement === canvas) {
-      penguin.angle += e.movementX * 0.002;
-    }
-  });
-
-  // Click anywhere (while pointer locked or not) to move penguin to that point
-  canvas.addEventListener('click', e => {
-    // clientX/Y still works when pointer locked
-    penguin.target = screenToWorld(e.clientX, e.clientY);
-  });
-
-  // Draw background with offset for penguin position
   function drawBackground() {
     const offsetX = -penguin.x;
     const offsetY = -penguin.y;
@@ -118,26 +142,22 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.ellipse(canvas.width/2 + offsetX, canvas.height + offsetY, canvas.width, canvas.height/1.5, 0, 0, Math.PI*2);
+    ctx.ellipse(canvas.width / 2 + offsetX, canvas.height + offsetY, canvas.width, canvas.height / 1.5, 0, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Draw penguin rotated by current angle
   function drawPenguin() {
     ctx.save();
-    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.rotate(penguin.angle);
-    // Body
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.ellipse(0, 0, 40, 60, 0, 0, Math.PI*2);
+    ctx.ellipse(0, 0, 40, 60, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Belly
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.ellipse(0, 10, 25, 40, 0, 0, Math.PI*2);
+    ctx.ellipse(0, 10, 25, 40, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Beak
     ctx.fillStyle = 'orange';
     ctx.beginPath();
     ctx.moveTo(0, -20);
@@ -145,22 +165,19 @@
     ctx.lineTo(0, 0);
     ctx.closePath();
     ctx.fill();
-    // Eyes white
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(-10, -30, 8, 0, Math.PI*2);
-    ctx.arc(10, -30, 8, 0, Math.PI*2);
+    ctx.arc(-10, -30, 8, 0, Math.PI * 2);
+    ctx.arc(10, -30, 8, 0, Math.PI * 2);
     ctx.fill();
-    // Pupils black
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(-10, -30, 4, 0, Math.PI*2);
-    ctx.arc(10, -30, 4, 0, Math.PI*2);
+    ctx.arc(-10, -30, 4, 0, Math.PI * 2);
+    ctx.arc(10, -30, 4, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
 
-  // Draw red target marker on destination
   function drawTarget() {
     if (!penguin.target) return;
     ctx.fillStyle = 'red';
@@ -175,12 +192,11 @@
     ctx.fill();
   }
 
-  // Update penguin position toward target
   function update(dt) {
     if (!penguin.target) return;
     const dx = penguin.target.x - penguin.x;
     const dy = penguin.target.y - penguin.y;
-    const dist = Math.sqrt(dx*dx + dy*dy);
+    const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 1) {
       penguin.x = penguin.target.x;
       penguin.y = penguin.target.y;
@@ -211,4 +227,3 @@
 </script>
 </body>
 </html>
-
