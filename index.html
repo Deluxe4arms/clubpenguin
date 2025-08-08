@@ -1,86 +1,180 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Three.js Debug Example</title>
-  <style>
-    html, body {
-      margin: 0; 
-      padding: 0; 
-      overflow: hidden; 
-      height: 100%; 
-      width: 100%;
-      background: black;
-    }
-    canvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-      background: #222222; /* dark gray so canvas is visible */
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Club Penguin Beta 2005 Style — Point & Click Movement</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #88ccee;
+  }
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    cursor: pointer;
+    image-rendering: pixelated;
+    background: #88ccee;
+  }
+  #hud {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
+<div id="hud">Click anywhere to move the penguin</div>
+<canvas id="game"></canvas>
+<script>
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
 
-  <!-- Load Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
+  // Resize canvas to fill window
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-  <script>
-    window.onload = () => {
-      if (typeof THREE === 'undefined') {
-        console.error("Three.js failed to load!");
-        return;
+  // Penguin player state
+  const penguin = {
+    x: 0, // world coordinates
+    y: 0,
+    speed: 180, // pixels per second
+    target: null // target position to move to in world coords
+  };
+
+  // Convert screen click coords to world coords relative to penguin center
+  function screenToWorld(screenX, screenY) {
+    const dx = screenX - canvas.width / 2;
+    const dy = screenY - canvas.height / 2;
+    return { x: penguin.x + dx, y: penguin.y + dy };
+  }
+
+  // Mouse click sets movement target
+  canvas.addEventListener('click', e => {
+    penguin.target = screenToWorld(e.clientX, e.clientY);
+  });
+
+  // Draw sky and ground (simple ellipse for snow)
+  function drawBackground() {
+    ctx.fillStyle = '#88ccee'; // sky blue
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#fff'; // snow ground
+    ctx.beginPath();
+    ctx.ellipse(
+      canvas.width / 2,
+      canvas.height,
+      canvas.width,
+      canvas.height / 1.5,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+
+  // Draw penguin at screen center (no rotation)
+  function drawPenguin() {
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+
+    // Body
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 40, 60, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Belly
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.ellipse(0, 10, 25, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Beak
+    ctx.fillStyle = 'orange';
+    ctx.beginPath();
+    ctx.moveTo(0, -20);
+    ctx.lineTo(15, -10);
+    ctx.lineTo(0, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Eyes white
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(-10, -30, 8, 0, Math.PI * 2);
+    ctx.arc(10, -30, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pupils black
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(-10, -30, 4, 0, Math.PI * 2);
+    ctx.arc(10, -30, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // Update penguin position toward target
+  function update(dt) {
+    if (penguin.target) {
+      const dx = penguin.target.x - penguin.x;
+      const dy = penguin.target.y - penguin.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 1) {
+        // Reached target
+        penguin.x = penguin.target.x;
+        penguin.y = penguin.target.y;
+        penguin.target = null;
+      } else {
+        // Move toward target smoothly
+        const vx = (dx / dist) * penguin.speed;
+        const vy = (dy / dist) * penguin.speed;
+        penguin.x += vx * dt;
+        penguin.y += vy * dt;
       }
-      console.log("Three.js loaded successfully.");
+    }
+  }
 
-      // Create scene
-      const scene = new THREE.Scene();
+  // HUD update
+  const hud = document.getElementById('hud');
+  function updateHUD() {
+    hud.textContent =
+      'Click anywhere to move the penguin\n' +
+      `Position: (${penguin.x.toFixed(1)}, ${penguin.y.toFixed(1)})` +
+      (penguin.target
+        ? ` · Moving to: (${penguin.target.x.toFixed(1)}, ${penguin.target.y.toFixed(1)})`
+        : '');
+  }
 
-      // Camera setup
-      const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.set(0, 0, 3);
-      camera.lookAt(0, 0, 0);
+  // Main loop
+  let last = performance.now();
+  function loop(now) {
+    const dt = (now - last) / 1000;
+    last = now;
 
-      // Renderer setup
-      const canvas = document.getElementById("gameCanvas");
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setClearColor(0x222222); // dark gray background
+    update(dt);
+    drawBackground();
+    drawPenguin();
+    updateHUD();
 
-      // Axes helper
-      const axesHelper = new THREE.AxesHelper(2);
-      scene.add(axesHelper);
-      console.log("Added axesHelper:", axesHelper);
+    requestAnimationFrame(loop);
+  }
 
-      // Cube with normals material
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshNormalMaterial();
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
-      console.log("Added cube:", cube);
-
-      // Animation loop
-      function animate() {
-        requestAnimationFrame(animate);
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      }
-      animate();
-
-      // Resize handler
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-    };
-  </script>
+  requestAnimationFrame(loop);
+</script>
 </body>
 </html>
