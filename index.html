@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Club Penguin Beta 2005 Style — Point & Click Movement</title>
+<title>Club Penguin - Pointer Lock + Click to Move</title>
 <style>
   body {
     margin: 0;
@@ -28,16 +28,34 @@
     font-family: monospace;
     user-select: none;
   }
+  #instructions {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-family: monospace;
+    user-select: none;
+  }
 </style>
 </head>
 <body>
-<div id="hud">Click anywhere to move the penguin</div>
+<div id="instructions">
+  Click to lock pointer and look around<br />
+  Click anywhere (while pointer locked or unlocked) to move penguin<br />
+  Press ESC to unlock pointer
+</div>
+<div id="hud" style="display:none;">Position: (0,0), Angle: 0</div>
 <canvas id="game"></canvas>
 <script>
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
+  const hud = document.getElementById('hud');
+  const instructions = document.getElementById('instructions');
 
-  // Resize canvas to fill window
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -45,62 +63,80 @@
   window.addEventListener('resize', resize);
   resize();
 
-  // Penguin player state
+  // Player state
   const penguin = {
-    x: 0, // world coordinates
+    x: 0,
     y: 0,
-    speed: 180, // pixels per second
-    target: null // target position to move to in world coords
+    angle: 0,
+    speed: 180,
+    target: null
   };
 
-  // Convert screen click coords to world coords relative to penguin center
+  // Convert screen coords to world coords relative to penguin center
   function screenToWorld(screenX, screenY) {
     const dx = screenX - canvas.width / 2;
     const dy = screenY - canvas.height / 2;
     return { x: penguin.x + dx, y: penguin.y + dy };
   }
 
-  // Mouse click sets movement target
+  // Pointer lock setup: click to lock pointer if not locked
+  canvas.addEventListener('click', () => {
+    if (document.pointerLockElement !== canvas) {
+      canvas.requestPointerLock();
+    }
+  });
+
+  // Show/hide instructions & hud on pointer lock changes
+  document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === canvas) {
+      instructions.style.display = 'none';
+      hud.style.display = 'block';
+    } else {
+      instructions.style.display = 'block';
+      hud.style.display = 'none';
+    }
+  });
+
+  // Mouse movement rotates penguin angle when pointer locked
+  document.addEventListener('mousemove', e => {
+    if (document.pointerLockElement === canvas) {
+      penguin.angle += e.movementX * 0.002;
+    }
+  });
+
+  // Click anywhere (while pointer locked or not) to move penguin to that point
   canvas.addEventListener('click', e => {
+    // clientX/Y still works when pointer locked
     penguin.target = screenToWorld(e.clientX, e.clientY);
   });
 
-  // Draw sky and ground (simple ellipse for snow)
+  // Draw background with offset for penguin position
   function drawBackground() {
-    ctx.fillStyle = '#88ccee'; // sky blue
+    const offsetX = -penguin.x;
+    const offsetY = -penguin.y;
+    ctx.fillStyle = '#88ccee';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#fff'; // snow ground
+    ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.ellipse(
-      canvas.width / 2,
-      canvas.height,
-      canvas.width,
-      canvas.height / 1.5,
-      0,
-      0,
-      Math.PI * 2
-    );
+    ctx.ellipse(canvas.width/2 + offsetX, canvas.height + offsetY, canvas.width, canvas.height/1.5, 0, 0, Math.PI*2);
     ctx.fill();
   }
 
-  // Draw penguin at screen center (no rotation)
+  // Draw penguin rotated by current angle
   function drawPenguin() {
     ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.rotate(penguin.angle);
     // Body
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.ellipse(0, 0, 40, 60, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, 40, 60, 0, 0, Math.PI*2);
     ctx.fill();
-
     // Belly
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.ellipse(0, 10, 25, 40, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 10, 25, 40, 0, 0, Math.PI*2);
     ctx.fill();
-
     // Beak
     ctx.fillStyle = 'orange';
     ctx.beginPath();
@@ -109,58 +145,54 @@
     ctx.lineTo(0, 0);
     ctx.closePath();
     ctx.fill();
-
     // Eyes white
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(-10, -30, 8, 0, Math.PI * 2);
-    ctx.arc(10, -30, 8, 0, Math.PI * 2);
+    ctx.arc(-10, -30, 8, 0, Math.PI*2);
+    ctx.arc(10, -30, 8, 0, Math.PI*2);
     ctx.fill();
-
     // Pupils black
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(-10, -30, 4, 0, Math.PI * 2);
-    ctx.arc(10, -30, 4, 0, Math.PI * 2);
+    ctx.arc(-10, -30, 4, 0, Math.PI*2);
+    ctx.arc(10, -30, 4, 0, Math.PI*2);
     ctx.fill();
-
     ctx.restore();
+  }
+
+  // Draw red target marker on destination
+  function drawTarget() {
+    if (!penguin.target) return;
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(
+      canvas.width / 2 + (penguin.target.x - penguin.x),
+      canvas.height / 2 + (penguin.target.y - penguin.y),
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
   }
 
   // Update penguin position toward target
   function update(dt) {
-    if (penguin.target) {
-      const dx = penguin.target.x - penguin.x;
-      const dy = penguin.target.y - penguin.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < 1) {
-        // Reached target
-        penguin.x = penguin.target.x;
-        penguin.y = penguin.target.y;
-        penguin.target = null;
-      } else {
-        // Move toward target smoothly
-        const vx = (dx / dist) * penguin.speed;
-        const vy = (dy / dist) * penguin.speed;
-        penguin.x += vx * dt;
-        penguin.y += vy * dt;
-      }
+    if (!penguin.target) return;
+    const dx = penguin.target.x - penguin.x;
+    const dy = penguin.target.y - penguin.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 1) {
+      penguin.x = penguin.target.x;
+      penguin.y = penguin.target.y;
+      penguin.target = null;
+      return;
     }
+    const vx = (dx / dist) * penguin.speed;
+    const vy = (dy / dist) * penguin.speed;
+    penguin.x += vx * dt;
+    penguin.y += vy * dt;
   }
 
-  // HUD update
-  const hud = document.getElementById('hud');
-  function updateHUD() {
-    hud.textContent =
-      'Click anywhere to move the penguin\n' +
-      `Position: (${penguin.x.toFixed(1)}, ${penguin.y.toFixed(1)})` +
-      (penguin.target
-        ? ` · Moving to: (${penguin.target.x.toFixed(1)}, ${penguin.target.y.toFixed(1)})`
-        : '');
-  }
-
-  // Main loop
   let last = performance.now();
   function loop(now) {
     const dt = (now - last) / 1000;
@@ -168,8 +200,9 @@
 
     update(dt);
     drawBackground();
+    drawTarget();
     drawPenguin();
-    updateHUD();
+    hud.textContent = `Position: (${penguin.x.toFixed(1)}, ${penguin.y.toFixed(1)}) Angle: ${penguin.angle.toFixed(2)}`;
 
     requestAnimationFrame(loop);
   }
