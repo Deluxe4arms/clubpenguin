@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Club Penguin - Pointer Lock + Click to Move (Ground Only)</title>
+<title>Club Penguin - Pointer Lock + Click to Move (Walking on Ground)</title>
 <style>
   body {
     margin: 0;
@@ -69,8 +69,9 @@
     x: 0,
     y: 0,
     angle: 0,
-    speed: 180,
-    target: null
+    speed: 180, // pixels per second
+    target: null,
+    walkTimer: 0 // for bobbing animation
   };
 
   function screenToWorld(screenX, screenY) {
@@ -79,30 +80,61 @@
     return { x: penguin.x + dx, y: penguin.y + dy };
   }
 
-  // Clamp target point to inside the ground ellipse
+  // Clamp a point inside the ellipse ground area
   function clampToGround(x, y) {
     const radiusX = canvas.width;
     const radiusY = canvas.height / 1.5;
+    const centerX = penguin.x + canvas.width / 2;
+    const centerY = penguin.y + canvas.height;
 
+    const normX = (x - centerX) / radiusX;
+    const normY = (y - centerY) / radiusY;
+    const distSquared = normX * normX + normY * normY;
+
+    if (distSquared <= 1) {
+      return { x, y };
+    }
+
+    const scale = 1 / Math.sqrt(distSquared);
+    return {
+      x: centerX + normX * scale * radiusX,
+      y: centerY + normY * scale * radiusY
+    };
+  }
+
+  // Clamp penguin position inside ground ellipse
+  function clampPositionToGround() {
+    const radiusX = canvas.width;
+    const radiusY = canvas.height / 1.5;
+    const centerX = penguin.x + canvas.width / 2;
+    const centerY = penguin.y + canvas.height;
+
+    // Note: penguin.x and penguin.y are world coords; center is offset by penguin position,
+    // so calculate position relative to ellipse center in world coords:
+
+    // Actually for clamping, ellipse center depends on penguin.x/y so clamp relative to that:
+    // Better: calculate position relative to ellipse center:
     const ellipseCenterX = penguin.x + canvas.width / 2;
     const ellipseCenterY = penguin.y + canvas.height;
 
-    const normX = (x - ellipseCenterX) / radiusX;
-    const normY = (y - ellipseCenterY) / radiusY;
+    // So penguin coords relative to ellipse center:
+    const relX = penguin.x - ellipseCenterX;
+    const relY = penguin.y - ellipseCenterY;
+
+    const normX = relX / radiusX;
+    const normY = relY / radiusY;
 
     const distSquared = normX * normX + normY * normY;
 
     if (distSquared <= 1) {
-      // Inside ellipse
-      return { x, y };
+      // inside ellipse, no change
+      return;
     }
 
-    // Outside ellipse, clamp to edge
+    // outside ellipse, clamp to boundary
     const scale = 1 / Math.sqrt(distSquared);
-    return {
-      x: ellipseCenterX + normX * scale * radiusX,
-      y: ellipseCenterY + normY * scale * radiusY
-    };
+    penguin.x = ellipseCenterX + normX * scale * radiusX;
+    penguin.y = ellipseCenterY + normY * scale * radiusY;
   }
 
   let lastMousePos = { x: canvas.width / 2, y: canvas.height / 2 };
@@ -146,18 +178,33 @@
     ctx.fill();
   }
 
+  // Draw penguin with simple bobbing while walking
   function drawPenguin() {
+    const bobbingAmplitude = 5; // pixels
+    const bobbingSpeed = 6; // oscillations per second
+
+    let bobOffset = 0;
+    if (penguin.target) {
+      bobOffset = Math.sin(penguin.walkTimer * bobbingSpeed) * bobbingAmplitude;
+    }
+
     ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.translate(canvas.width / 2, canvas.height / 2 + bobOffset);
     ctx.rotate(penguin.angle);
+
+    // Body
     ctx.fillStyle = '#000';
     ctx.beginPath();
     ctx.ellipse(0, 0, 40, 60, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // Belly
     ctx.fillStyle = '#fff';
     ctx.beginPath();
     ctx.ellipse(0, 10, 25, 40, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // Beak
     ctx.fillStyle = 'orange';
     ctx.beginPath();
     ctx.moveTo(0, -20);
@@ -165,16 +212,21 @@
     ctx.lineTo(0, 0);
     ctx.closePath();
     ctx.fill();
+
+    // Eyes white
     ctx.fillStyle = '#fff';
     ctx.beginPath();
     ctx.arc(-10, -30, 8, 0, Math.PI * 2);
     ctx.arc(10, -30, 8, 0, Math.PI * 2);
     ctx.fill();
+
+    // Pupils black
     ctx.fillStyle = '#000';
     ctx.beginPath();
     ctx.arc(-10, -30, 4, 0, Math.PI * 2);
     ctx.arc(10, -30, 4, 0, Math.PI * 2);
     ctx.fill();
+
     ctx.restore();
   }
 
@@ -193,20 +245,35 @@
   }
 
   function update(dt) {
-    if (!penguin.target) return;
+    if (!penguin.target) {
+      // reset walk timer when not moving
+      penguin.walkTimer = 0;
+      return;
+    }
+
     const dx = penguin.target.x - penguin.x;
     const dy = penguin.target.y - penguin.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
+
     if (dist < 1) {
       penguin.x = penguin.target.x;
       penguin.y = penguin.target.y;
       penguin.target = null;
+      penguin.walkTimer = 0;
       return;
     }
+
     const vx = (dx / dist) * penguin.speed;
     const vy = (dy / dist) * penguin.speed;
+
     penguin.x += vx * dt;
     penguin.y += vy * dt;
+
+    // Clamp penguin inside ground ellipse after moving
+    clampPositionToGround();
+
+    // Update walk timer for bobbing animation
+    penguin.walkTimer += dt;
   }
 
   let last = performance.now();
