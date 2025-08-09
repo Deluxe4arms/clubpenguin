@@ -1,67 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Club Penguin Clone</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-    canvas {
-      display: block;
-      background: url('Town_2012_Ice_Rink.webp') no-repeat center center;
-      background-size: cover;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Dragon Fable: HTML Edition</title>
+<style>
+body {
+  background-color: #111;
+  color: #eee;
+  font-family: monospace;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+#game {
+  padding: 20px;
+  max-width: 700px;
+  margin: auto;
+}
+button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+button:hover {
+  background: #666;
+}
+.stats {
+  margin-top: 10px;
+}
+</style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="1000" height="632"></canvas>
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+<div id="game"></div>
 
-    const penguin = new Image();
-    penguin.src = "Rockhopper_sprites.webp";
+<script>
+let player = { hp: 20, maxHp: 20, atk: 4, gold: 0 };
+let enemy = null;
+let state = "menu";
 
-    const penguinWidth = 64;
-    const penguinHeight = 82;
-    let penguinX = 500;
-    let penguinY = 300;
-    const speed = 4;
+function show(text, buttons = []) {
+  let html = `<p>${text}</p>`;
+  for (let b of buttons) {
+    html += `<button onclick="${b.action}">${b.text}</button>`;
+  }
+  html += `<div class='stats'>HP: ${player.hp}/${player.maxHp} | ATK: ${player.atk} | Gold: ${player.gold}</div>`;
+  document.getElementById("game").innerHTML = html;
+}
 
-    let keys = {};
+function startGame() {
+  state = "explore";
+  show("You set out into the wild lands, seeking adventure.", [
+    { text: "Explore", action: "explore()" },
+    { text: "Rest", action: "rest()" }
+  ]);
+}
 
-    window.addEventListener("keydown", function (e) {
-      keys[e.key] = true;
-    });
-    window.addEventListener("keyup", function (e) {
-      keys[e.key] = false;
-    });
+function explore() {
+  if (Math.random() < 0.6) {
+    startBattle();
+  } else {
+    player.gold += 5;
+    show("You find a small treasure chest. +5 gold!", [
+      { text: "Continue", action: "startGame()" }
+    ]);
+  }
+}
 
-    function drawPenguin() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(
-        penguin,
-        0, 0, penguinWidth, penguinHeight,
-        penguinX, penguinY, penguinWidth, penguinHeight
-      );
+function rest() {
+  player.hp = player.maxHp;
+  show("You rest and recover your strength.", [
+    { text: "Continue", action: "startGame()" }
+  ]);
+}
+
+function startBattle() {
+  enemy = { name: "Goblin", hp: 10, atk: 3 };
+  state = "battle";
+  show(`A wild ${enemy.name} appears!`, [
+    { text: "Attack", action: "attack()" },
+    { text: "Run", action: "flee()" }
+  ]);
+}
+
+function attack() {
+  enemy.hp -= player.atk;
+  if (enemy.hp <= 0) {
+    player.gold += 10;
+    show(`You defeated the ${enemy.name}! +10 gold`, [
+      { text: "Continue", action: "startGame()" }
+    ]);
+    return;
+  }
+  player.hp -= enemy.atk;
+  if (player.hp <= 0) {
+    show("You have been defeated! Game Over.", [
+      { text: "Restart", action: "location.reload()" }
+    ]);
+    return;
+  }
+  show(`${enemy.name} HP: ${enemy.hp}<br>Your HP: ${player.hp}`, [
+    { text: "Attack", action: "attack()" },
+    { text: "Run", action: "flee()" }
+  ]);
+}
+
+function flee() {
+  if (Math.random() < 0.5) {
+    show("You successfully escaped!", [
+      { text: "Continue", action: "startGame()" }
+    ]);
+  } else {
+    player.hp -= enemy.atk;
+    if (player.hp <= 0) {
+      show("You failed to flee and were defeated!", [
+        { text: "Restart", action: "location.reload()" }
+      ]);
+    } else {
+      show("You failed to flee! The enemy attacks.", [
+        { text: "Attack", action: "attack()" },
+        { text: "Run", action: "flee()" }
+      ]);
     }
+  }
+}
 
-    function update() {
-      if (keys["ArrowUp"]) penguinY -= speed;
-      if (keys["ArrowDown"]) penguinY += speed;
-      if (keys["ArrowLeft"]) penguinX -= speed;
-      if (keys["ArrowRight"]) penguinX += speed;
-
-      drawPenguin();
-      requestAnimationFrame(update);
-    }
-
-    penguin.onload = () => {
-      update();
-    };
-  </script>
+// Start menu
+show("Welcome to <b>Dragon Fable</b>!", [
+  { text: "Start Adventure", action: "startGame()" }
+]);
+</script>
 </body>
 </html>
