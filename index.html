@@ -1,137 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Dragon Fable: HTML Edition</title>
+<title>Penguin Adventure</title>
 <style>
-body {
-  background-color: #111;
-  color: #eee;
-  font-family: monospace;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
-#game {
-  padding: 20px;
-  max-width: 700px;
-  margin: auto;
-}
-button {
-  background: #444;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-button:hover {
-  background: #666;
-}
-.stats {
-  margin-top: 10px;
-}
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #0b5ea0; /* Deep blue background */
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+    header {
+        background-color: #004b87;
+        padding: 10px 0;
+        text-align: center;
+        color: white;
+        font-size: 2em;
+        font-weight: bold;
+    }
+    main {
+        background-color: white;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    .top-box {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .top-box .info {
+        background: #1e78c2;
+        color: white;
+        padding: 15px;
+        border-radius: 6px;
+        width: 45%;
+    }
+    .top-box img {
+        max-width: 200px;
+    }
+    .play-btn {
+        display: block;
+        margin: 0 auto 20px auto;
+        background: #1e78c2;
+        color: white;
+        font-size: 1.2em;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        text-align: center;
+    }
+    .play-btn:hover {
+        background: #145e94;
+    }
+    footer {
+        background-color: #1e78c2;
+        padding: 10px;
+        text-align: center;
+        color: white;
+        margin-top: 20px;
+        border-top: 3px solid #004b87;
+    }
+    footer a {
+        color: yellow;
+        text-decoration: none;
+        font-weight: bold;
+    }
 </style>
 </head>
 <body>
-<div id="game"></div>
 
-<script>
-let player = { hp: 20, maxHp: 20, atk: 4, gold: 0 };
-let enemy = null;
-let state = "menu";
+<header>
+    Penguin Adventure
+</header>
 
-function show(text, buttons = []) {
-  let html = `<p>${text}</p>`;
-  for (let b of buttons) {
-    html += `<button onclick="${b.action}">${b.text}</button>`;
-  }
-  html += `<div class='stats'>HP: ${player.hp}/${player.maxHp} | ATK: ${player.atk} | Gold: ${player.gold}</div>`;
-  document.getElementById("game").innerHTML = html;
-}
+<main>
+    <div class="top-box">
+        <div class="info">
+            <h3>Welcome to Penguin Adventure!</h3>
+            <p>
+                Explore a snowy world, meet other penguins, and go on exciting quests.
+                Play mini-games, earn coins, and customize your penguin!
+            </p>
+        </div>
+        <img src="penguin.png" alt="Penguin Igloo">
+    </div>
 
-function startGame() {
-  state = "explore";
-  show("You set out into the wild lands, seeking adventure.", [
-    { text: "Explore", action: "explore()" },
-    { text: "Rest", action: "rest()" }
-  ]);
-}
+    <a href="#" class="play-btn">PLAY NOW FOR FREE!</a>
 
-function explore() {
-  if (Math.random() < 0.6) {
-    startBattle();
-  } else {
-    player.gold += 5;
-    show("You find a small treasure chest. +5 gold!", [
-      { text: "Continue", action: "startGame()" }
-    ]);
-  }
-}
+    <p>
+        Create your penguin, choose its style, and explore a fun, snowy island.
+        Chat, play, and adventure your way through a world full of surprises.
+    </p>
 
-function rest() {
-  player.hp = player.maxHp;
-  show("You rest and recover your strength.", [
-    { text: "Continue", action: "startGame()" }
-  ]);
-}
+    <p>
+        <a href="#">Parents click here to learn more</a>
+    </p>
+</main>
 
-function startBattle() {
-  enemy = { name: "Goblin", hp: 10, atk: 3 };
-  state = "battle";
-  show(`A wild ${enemy.name} appears!`, [
-    { text: "Attack", action: "attack()" },
-    { text: "Run", action: "flee()" }
-  ]);
-}
+<footer>
+    <p>
+        <a href="#">Parents</a> | 
+        <a href="#">Help</a> | 
+        <a href="#">News</a> | 
+        <a href="#">Membership</a>
+    </p>
+    <small>© Penguin Adventure 2025. All rights reserved.</small>
+</footer>
 
-function attack() {
-  enemy.hp -= player.atk;
-  if (enemy.hp <= 0) {
-    player.gold += 10;
-    show(`You defeated the ${enemy.name}! +10 gold`, [
-      { text: "Continue", action: "startGame()" }
-    ]);
-    return;
-  }
-  player.hp -= enemy.atk;
-  if (player.hp <= 0) {
-    show("You have been defeated! Game Over.", [
-      { text: "Restart", action: "location.reload()" }
-    ]);
-    return;
-  }
-  show(`${enemy.name} HP: ${enemy.hp}<br>Your HP: ${player.hp}`, [
-    { text: "Attack", action: "attack()" },
-    { text: "Run", action: "flee()" }
-  ]);
-}
-
-function flee() {
-  if (Math.random() < 0.5) {
-    show("You successfully escaped!", [
-      { text: "Continue", action: "startGame()" }
-    ]);
-  } else {
-    player.hp -= enemy.atk;
-    if (player.hp <= 0) {
-      show("You failed to flee and were defeated!", [
-        { text: "Restart", action: "location.reload()" }
-      ]);
-    } else {
-      show("You failed to flee! The enemy attacks.", [
-        { text: "Attack", action: "attack()" },
-        { text: "Run", action: "flee()" }
-      ]);
-    }
-  }
-}
-
-// Start menu
-show("Welcome to <b>Dragon Fable</b>!", [
-  { text: "Start Adventure", action: "startGame()" }
-]);
-</script>
 </body>
 </html>
