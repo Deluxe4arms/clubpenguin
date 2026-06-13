@@ -1,151 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Big Brother - Eric's Harem</title>
-<style>
-    body { font-family: Arial, sans-serif; background: #0a0a0a; color: #e0e0e0; margin:0; padding:20px; }
-    #game { max-width: 920px; margin:auto; background:#111111; padding:20px; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,0.9); }
-    h1 { color:#bbbbbb; text-align:center; margin-bottom:10px; }
-    #output { height:480px; overflow-y:auto; background:#1a1a1a; padding:20px; border-radius:8px; margin:15px 0; line-height:1.65; border:1px solid #222; }
-    #image-container { text-align:center; margin:10px 0; min-height:220px; background:#1f1f1f; border-radius:8px; padding:8px; }
-    #image-container img { max-width:100%; max-height:280px; border-radius:8px; }
-    button { background:#222222; color:#e0e0e0; border:1px solid #444; padding:12px 16px; margin:6px 4px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; text-align:left; }
-    button:hover { background:#333333; border-color:#666; }
-    .stats { background:#1a1a1a; padding:12px; border-radius:8px; margin:10px 0; text-align:center; border:1px solid #222; }
-    .highlight { color:#ff9999; font-weight:bold; }
-</style>
+    <meta charset="UTF-8">
+    <title>Big Brother - Eric's Harem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        #game {
+            max-width: 920px;
+            margin: auto;
+            background-color: #111111;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+        }
+        h1 {
+            color: #bbbbbb;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        #output {
+            height: 480px;
+            overflow-y: auto;
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            line-height: 1.65;
+            border: 1px solid #222;
+        }
+        #image-container {
+            text-align: center;
+            margin: 10px 0;
+            min-height: 220px;
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            padding: 8px;
+        }
+        #image-container img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #222222;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            padding: 12px 16px;
+            margin: 6px 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+        }
+        button:hover {
+            background-color: #333333;
+            border-color: #666;
+        }
+        .stats {
+            background-color: #1a1a1a;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            border: 1px solid #222;
+        }
+        .highlight {
+            color: #ff9999;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<div id="game">
-    <h1>BIG BROTHER - Eric's Harem</h1>
-    <div class="stats" id="stats"></div>
-    <div id="image-container"><img id="scene-image" src="" alt="Scene"></div>
-    <div id="output"></div>
-    <div id="choices"></div>
-</div>
+    <div id="game">
+        <h1>BIG BROTHER - Eric's Harem</h1>
+        <div class="stats" id="stats"></div>
+        <div id="image-container"><img id="scene-image" src="" alt="Scene"></div>
+        <div id="output"></div>
+        <div id="choices"></div>
+    </div>
 
-<script>
-// Fresh NSFW Start
-let state = { day: 1, time: "Morning", momAff: 0, lilyAff: 0, emmaAff: 0, corruption: 0 };
+    <script>
+        // Fresh NSFW Start
+        let state = {
+            day: 1,
+            time: "Morning",
+            momAff: 0,
+            lilyAff: 0,
+            emmaAff: 0,
+            corruption: 0
+        };
 
-const output = document.getElementById('output');
-const choicesDiv = document.getElementById('choices');
-const statsDiv = document.getElementById('stats');
-const imageEl = document.getElementById('scene-image');
+        const output = document.getElementById('output');
+        const choicesDiv = document.getElementById('choices');
+        const statsDiv = document.getElementById('stats');
+        const imageEl = document.getElementById('scene-image');
 
-function print(text) { 
-    output.innerHTML += `<p>${text}</p>`; 
-    output.scrollTop = output.scrollHeight; 
-}
+        function print(text) {
+            output.innerHTML += `<p>${text}</p>`;
+            output.scrollTop = output.scrollHeight;
+        }
 
-function updateStats() {
-    statsDiv.innerHTML = `Day ${state.day} • ${state.time}<br>
-    Mom: <span class="highlight">${state.momAff}</span> | Lily: <span class="highlight">${state.lilyAff}</span> | Emma: <span class="highlight">${state.emmaAff}</span>`;
-}
+        function updateStats() {
+            statsDiv.innerHTML = `Day ${state.day} • ${state.time}<br>
+            Mom: <span class="highlight">${state.momAff}</span> | Lily: <span class="highlight">${state.lilyAff}</span> | Emma: <span class="highlight">${state.emmaAff}</span>`;
+        }
 
-function clearChoices() { choicesDiv.innerHTML = ''; }
+        function clearChoices() {
+            choicesDiv.innerHTML = '';
+        }
 
-function showImage(scene) {
-    const seeds = { mom: 101, lily: 64, emma: 201, sex: 315, pool: 180, kitchen: 251 };
-    imageEl.src = `https://picsum.photos/id/${seeds[scene] || 237}/800/350`;
-}
+        function showImage(scene) {
+            const seeds = { mom: 101, lily: 64, emma: 201, sex: 315, pool: 180, kitchen: 251 };
+            imageEl.src = `https://picsum.photos/id/${seeds[scene] || 237}/800/350`;
+        }
 
-function addChoice(number, text, callback) {
-    const btn = document.createElement('button');
-    btn.textContent = `${number}. ${text}`;
-    btn.onclick = () => { clearChoices(); callback(); };
-    choicesDiv.appendChild(btn);
-}
+        function addChoice(number, text, callback) {
+            const btn = document.createElement('button');
+            btn.textContent = `${number}. ${text}`;
+            btn.onclick = () => { clearChoices(); callback(); };
+            choicesDiv.appendChild(btn);
+        }
 
-function startGame() {
-    output.innerHTML = '';
-    print("<b>Day 1 - Morning</b>");
-    print("You are Eric (18). You've just returned home. Your mom Sarah, older sister Emma (24), and younger sister Lily (19) are here.");
-    print("Something feels different this time...");
-    updateStats();
-    showImage("kitchen");
-    day1Morning();
-}
+        function startGame() {
+            output.innerHTML = '';
+            print("<b>Day 1 - Morning</b>");
+            print("You are Eric (18). You've just returned home. Your mom Sarah, older sister Emma (24), and younger sister Lily (19) are here.");
+            print("Something feels different this time...");
+            updateStats();
+            showImage("kitchen");
+            day1Morning();
+        }
 
-function day1Morning() {
-    print("<br>You come downstairs.");
-    addChoice(1, "Go to kitchen and grope Mom", momMorning);
-    addChoice(2, "Go to Lily's room and tease her", lilyMorning);
-    addChoice(3, "Go to Emma's room", emmaMorning);
-}
+        function day1Morning() {
+            print("<br>You come downstairs.");
+            addChoice(1, "Go to kitchen and grope Mom", momMorning);
+            addChoice(2, "Go to Lily's room and tease her", lilyMorning);
+            addChoice(3, "Go to Emma's room", emmaMorning);
+        }
 
-function momMorning() {
-    print("Mom is in a thin robe. You hug her from behind and squeeze her big tits.");
-    state.momAff += 35; state.corruption += 12;
-    updateStats();
-    print("Mom: Eric...! What are you doing...? Mmm...");
-    showImage("mom");
-    mainHub();
-}
+        function momMorning() {
+            print("Mom is in a thin robe. You hug her from behind and squeeze her big tits.");
+            state.momAff += 35; state.corruption += 12;
+            updateStats();
+            print("Mom: Eric...! What are you doing...? Mmm...");
+            showImage("mom");
+            mainHub();
+        }
 
-function lilyMorning() {
-    print("Lily is in her bed wearing just an oversized t-shirt. You climb in and kiss her.");
-    state.lilyAff += 40; state.corruption += 15;
-    updateStats();
-    print("Lily: Big brother... your hand is between my legs...");
-    showImage("lily");
-    mainHub();
-}
+        function lilyMorning() {
+            print("Lily is in her bed wearing just an oversized t-shirt. You climb in and kiss her.");
+            state.lilyAff += 40; state.corruption += 15;
+            updateStats();
+            print("Lily: Big brother... your hand is between my legs...");
+            showImage("lily");
+            mainHub();
+        }
 
-function emmaMorning() {
-    print("Emma is lying on her bed in panties. She smirks as you enter.");
-    state.emmaAff += 38; state.corruption += 14;
-    updateStats();
-    print("Emma: Bold move, little brother. You want to fuck me already?");
-    showImage("emma");
-    mainHub();
-}
+        function emmaMorning() {
+            print("Emma is lying on her bed in panties. She smirks as you enter.");
+            state.emmaAff += 38; state.corruption += 14;
+            updateStats();
+            print("Emma: Bold move, little brother. You want to fuck me already?");
+            showImage("emma");
+            mainHub();
+        }
 
-function mainHub() {
-    print("<br><b>What do you do next?</b>");
-    addChoice(1, "Fuck Mom hard", () => {
-        print("You bend Mom over the kitchen counter and pound her wet pussy.");
-        state.momAff += 80; state.corruption += 10;
-        updateStats();
-        showImage("sex");
-        mainHub();
-    });
-    addChoice(2, "Fuck Lily", () => {
-        print("You push Lily onto her bed and slide deep inside her tight pussy.");
-        state.lilyAff += 85; state.corruption += 10;
-        updateStats();
-        showImage("sex");
-        mainHub();
-    });
-    addChoice(3, "Fuck Emma roughly", () => {
-        print("You choke Emma lightly while railing her hard from behind.");
-        state.emmaAff += 82; state.corruption += 10;
-        updateStats();
-        showImage("sex");
-        mainHub();
-    });
-    addChoice(4, "Advance to Next Day", nextDay);
-    addChoice(5, "End Game", ending);
-}
+        function mainHub() {
+            print("<br><b>What do you do next?</b>");
+            addChoice(1, "Fuck Mom hard", () => {
+                print("You bend Mom over the kitchen counter and pound her wet pussy.");
+                state.momAff += 80; state.corruption += 10;
+                updateStats();
+                showImage("sex");
+                mainHub();
+            });
+            addChoice(2, "Fuck Lily", () => {
+                print("You push Lily onto her bed and slide deep inside her tight pussy.");
+                state.lilyAff += 85; state.corruption += 10;
+                updateStats();
+                showImage("sex");
+                mainHub();
+            });
+            addChoice(3, "Fuck Emma roughly", () => {
+                print("You choke Emma lightly while railing her hard from behind.");
+                state.emmaAff += 82; state.corruption += 10;
+                updateStats();
+                showImage("sex");
+                mainHub();
+            });
+            addChoice(4, "Advance to Next Day", nextDay);
+            addChoice(5, "End Game", ending);
+        }
 
-function nextDay() {
-    state.day++;
-    state.time = "Afternoon";
-    print(`<b>Day ${state.day} - ${state.time}</b>`);
-    print("Your family is becoming more and more addicted to your cock.");
-    showImage("pool");
-    updateStats();
-    mainHub();
-}
+        function nextDay() {
+            state.day++;
+            state.time = "Afternoon";
+            print(`<b>Day ${state.day} - ${state.time}</b>`);
+            print("Your family is becoming more and more addicted to your cock.");
+            showImage("pool");
+            updateStats();
+            mainHub();
+        }
 
-function ending() {
-    print("<h2 style='color:#ff9999'>🎉 YOUR HAREM IS COMPLETE 🎉</h2>");
-    print("Mom, Emma, and Lily are now your personal fuck toys.");
-}
+        function ending() {
+            print("<h2 style='color:#ff9999'>🎉 YOUR HAREM IS COMPLETE 🎉</h2>");
+            print("Mom, Emma, and Lily are now your personal fuck toys.");
+        }
 
-// Start fresh NSFW game
-startGame();
-</script>
+        // Start fresh NSFW game
+        startGame();
+    </script>
 </body>
 </html>
